@@ -64,15 +64,19 @@ func main() {
 	}
 
 	gwmux := runtime.NewServeMux()
-	// Register Greeter
 	err = pb.RegisterGreeterHandler(context.Background(), gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
 
+	fs := http.FileServer(http.Dir("./static"))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", fs.ServeHTTP)
+	mux.Handle("/api/hello", gwmux)
+
 	gwServer := &http.Server{
 		Addr:    ":" + httpPort,
-		Handler: gwmux,
+		Handler: mux,
 	}
 
 	log.Println("Serving gRPC-Gateway on " + httpAddr)
