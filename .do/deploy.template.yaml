@@ -1,0 +1,10 @@
+spec:
+  name: sample-grpc-gateway
+  services:
+  - environment_slug: go
+    github:
+      branch: main
+      repo: bojand/sample-grpc-gateway
+    http_port: 8080
+    name: sample-grpc-gateway
+    run_command: sample-grpc-gateway
