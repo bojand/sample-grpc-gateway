@@ -1,7 +1,0 @@
-spec:
-  name: sample-grpc-gateway
-  services:
-  - name: grpc-gateway
-    git:
-      branch: main
-      repo_clone_url: https://github.com/bojand/sample-grpc-gateway.git

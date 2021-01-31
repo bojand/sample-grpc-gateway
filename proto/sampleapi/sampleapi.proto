@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "github.com/bojand/sample-grpc-gateway/proto/sampleapi";
+
+package sampleapi;
+
+import "google/api/annotations.proto";
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloResponse) {
+    option (google.api.http) = {
+      post: "/api/hello"
+      body: "*"
+    };
+  }
+
+  rpc Reverse (ReverseRequest) returns (ReverseResponse) {
+    option (google.api.http) = {
+      post: "/api/reverse"
+      body: "*"
+    };
+  }
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+}
+
+message ReverseRequest {
+  string input = 1;
+  bool upper = 2;
+}
+
+message ReverseResponse {
+  string message = 1;
+}

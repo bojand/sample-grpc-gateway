@@ -3,47 +3,17 @@ package main
 import (
 	"context"
 	"log"
-	"net"
 	"net/http"
 	"os"
 
 	"google.golang.org/grpc"
 
-	pb "github.com/bojand/sample-grpc-gateway/proto/helloworld"
+	pb "github.com/bojand/sample-grpc-gateway/proto/sampleapi"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-// server is used to implement helloworld.GreeterServer.
-type server struct {
-	pb.UnimplementedGreeterServer
-}
-
-// SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Received: %v", in.GetName())
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
-}
-
 func main() {
-	grpcPort := os.Getenv("GRPC_PORT")
-	if grpcPort == "" {
-		grpcPort = "5000"
-	}
-	grpcAddr := "0.0.0.0:" + grpcPort
-
-	lis, err := net.Listen("tcp", grpcAddr)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
-
-	log.Println("Serving gRPC on " + grpcAddr)
-	go func() {
-		if err := s.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
+	grpcAddr := os.Getenv("SAMPLESVC_ADDR")
 
 	httpPort := os.Getenv("PORT")
 	if httpPort == "" {
@@ -73,6 +43,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", fs.ServeHTTP)
 	mux.Handle("/api/hello", gwmux)
+	mux.Handle("/api/reverse", gwmux)
 
 	gwServer := &http.Server{
 		Addr:    ":" + httpPort,

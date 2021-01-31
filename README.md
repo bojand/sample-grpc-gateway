@@ -2,7 +2,17 @@
 
 Sample [gRPC Gateway](https://grpc-ecosystem.github.io/grpc-gateway) application for DigitalOcean App Platform.
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/bojand/sample-grpc-gateway/tree/main)
+## Instructions
+
+Clone the repo.
+
+Adjust `./do/app.yaml` to match up your GitHub URLs.
+
+Create app using [doctl](https://github.com/digitalocean/doctl):
+
+```sh
+doctl apps create --spec .do/app.yaml
+```
 
 ## Development
 
