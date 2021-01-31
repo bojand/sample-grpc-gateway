@@ -21,21 +21,31 @@
     </p>
     <h3>Usage</h3>
     <br>
-    <pre>http POST 'https://sample-grpc-gateway-7yppc.ondigitalocean.app/api/hello' name=foo</pre>
+    <pre>
+$ http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/hello' name=asdf
+$ http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/reverse' input=foobar
+$ http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/reverse' input=foobar upper:=true</pre>
     <h3>Proto</h3>
     <pre>
 syntax = "proto3";
 
-option go_package = "github.com/bojand/sample-grpc-gateway/proto/helloworld";
+option go_package = "github.com/bojand/sample-grpc-gateway/proto/sampleapi";
 
-package helloworld;
+package sampleapi;
 
 import "google/api/annotations.proto";
 
 service Greeter {
-    rpc SayHello (HelloRequest) returns (HelloReply) {
+    rpc SayHello (HelloRequest) returns (HelloResponse) {
         option (google.api.http) = {
             post: "/api/hello"
+            body: "*"
+        };
+    }
+
+    rpc Reverse (ReverseRequest) returns (ReverseResponse) {
+        option (google.api.http) = {
+            post: "/api/reverse"
             body: "*"
         };
     }
@@ -45,7 +55,16 @@ message HelloRequest {
     string name = 1;
 }
 
-message HelloReply {
+message HelloResponse {
+    string message = 1;
+}
+
+message ReverseRequest {
+    string input = 1;
+    bool upper = 2;
+}
+
+message ReverseResponse {
     string message = 1;
 }</pre>
 </body>
