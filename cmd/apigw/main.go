@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-chi/chi"
 	"google.golang.org/grpc"
 
 	pb "github.com/bojand/sample-grpc-gateway/proto/sampleapi"
@@ -40,14 +41,14 @@ func main() {
 	}
 
 	fs := http.FileServer(http.Dir("./static"))
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", fs.ServeHTTP)
-	mux.Handle("/api/hello", gwmux)
-	mux.Handle("/api/reverse", gwmux)
+
+	r := chi.NewRouter()
+	r.Get("/", fs.ServeHTTP)
+	r.Mount("/api", gwmux)
 
 	gwServer := &http.Server{
 		Addr:    ":" + httpPort,
-		Handler: mux,
+		Handler: r,
 	}
 
 	log.Println("Serving gRPC-Gateway on " + httpAddr)

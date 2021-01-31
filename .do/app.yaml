@@ -3,7 +3,7 @@ services:
 - name: apigw
   github:
     branch: multi
-    repo: https://github.com/bojand/sample-grpc-gateway
+    repo: bojand/sample-grpc-gateway
   build_command: "make apigw"
   run_command: "./dist/apigw"
   envs:
@@ -13,7 +13,7 @@ services:
 - name: samplesvc
   github:
     branch: multi
-    repo: https://github.com/bojand/sample-grpc-gateway
+    repo: bojand/sample-grpc-gateway
   build_command: "make samplesvc"
   run_command: "./dist/samplesvc"
   internal_ports:
