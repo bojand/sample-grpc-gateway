@@ -22,7 +22,7 @@ func main() {
 	}
 	httpAddr := "0.0.0.0:" + httpPort
 
-	// Create a client connection to the gRPC server we just started
+	// Create a client connection to the gRPC server
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
@@ -34,23 +34,23 @@ func main() {
 		log.Fatalln("Failed to dial server:", err)
 	}
 
+	// grpc gateway mux
 	gwmux := runtime.NewServeMux()
 	err = pb.RegisterGreeterHandler(context.Background(), gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
 
+	// static files
 	fs := http.FileServer(http.Dir("./static"))
 
+	// router
 	r := chi.NewRouter()
 	r.Get("/", fs.ServeHTTP)
-	r.Mount("/api", gwmux)
+	r.Mount("/api", gwmux) // all /api/* requests get routed to grpc service
 
-	gwServer := &http.Server{
-		Addr:    ":" + httpPort,
-		Handler: r,
-	}
+	server := &http.Server{Addr: ":" + httpPort, Handler: r}
 
 	log.Println("Serving gRPC-Gateway on " + httpAddr)
-	log.Fatalln(gwServer.ListenAndServe())
+	log.Fatalln(server.ListenAndServe())
 }
