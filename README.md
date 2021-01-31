@@ -27,4 +27,9 @@ To generate code:
 buf generate
 ```
 
+## Extra
+
+This consists of a single service that acts as both the HTTP gRPC Gateway and the actual gRPC service.
+We can easily split up this into two separate services for each component. You can view code for this in the [multi branch](https://github.com/bojand/sample-grpc-gateway/tree/multi).
+
 Happy hacking!
