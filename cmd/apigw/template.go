@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+package main
+
+var indexTemplate string = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -29,10 +31,16 @@
     </p>
     <h3>Usage</h3>
     <br>
-    <pre>
-http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/hello' name=asdf
-http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/reverse' input=foobar
-http POST 'https://sample-grpc-gateway-multi-2sgpq.ondigitalocean.app/api/reverse' input=foobar upper:=true</pre>
+    <pre>http POST 
+    '{{ .PublicURL }}/api/hello' name=asdf
+
+http POST \
+    '{{ .PublicURL }}/api/reverse' \
+    input=foobar
+
+http POST \
+    '{{ .PublicURL }}/api/reverse' \
+    input=foobar upper:=true</pre>
     <h3>Proto</h3>
     <br>
     <pre>
@@ -78,4 +86,4 @@ message ReverseResponse {
 }</pre>
 </body>
 
-</html>
+</html>`
