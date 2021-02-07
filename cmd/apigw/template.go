@@ -31,7 +31,7 @@ var indexTemplate string = `<!DOCTYPE html>
     </p>
     <h3>Usage</h3>
     <br>
-    <pre>http POST 
+    <pre>http POST \
     '{{ .PublicURL }}/api/hello' name=asdf
 
 http POST \
