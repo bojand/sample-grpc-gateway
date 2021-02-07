@@ -10,6 +10,9 @@ services:
   - key: SAMPLESVC_ADDR
     value: "samplesvc:5500"
     scope: RUN_TIME
+  - key: PUBLIC_URL
+    scope: RUN_TIME
+    value: ${_self.PUBLIC_URL}
 - name: samplesvc
   github:
     branch: multi
