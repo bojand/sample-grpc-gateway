@@ -2,6 +2,12 @@
 
 Sample [gRPC Gateway](https://grpc-ecosystem.github.io/grpc-gateway) application for DigitalOcean App Platform.
 
+### apigw
+The HTTP service that sets up the gRPC gateway.
+
+### samplesvc
+The actual gRPC service that handles all the gRPC call.
+
 ## Instructions
 
 Clone the repo.
