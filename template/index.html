@@ -21,7 +21,9 @@
     </p>
     <h3>Usage</h3>
     <br>
-    <pre>http POST 'https://sample-grpc-gateway-7yppc.ondigitalocean.app/api/hello' name=foo</pre>
+    <pre>http POST \
+    '{{ .PublicURL }}/api/hello' \
+    name=foo</pre>
     <h3>Proto</h3>
     <pre>
 syntax = "proto3";

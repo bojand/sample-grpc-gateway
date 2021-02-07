@@ -6,6 +6,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
+	"sync"
+	"text/template"
 
 	"google.golang.org/grpc"
 
@@ -16,6 +19,8 @@ import (
 // server is used to implement helloworld.GreeterServer.
 type server struct {
 	pb.UnimplementedGreeterServer
+
+	PublicURL string
 }
 
 // SayHello implements helloworld.GreeterServer
@@ -31,12 +36,26 @@ func main() {
 	}
 	grpcAddr := "0.0.0.0:" + grpcPort
 
+	httpPort := os.Getenv("PORT")
+	if httpPort == "" {
+		httpPort = "3000"
+	}
+	httpAddr := "0.0.0.0:" + httpPort
+
+	publicURL := os.Getenv("PUBLIC_URL")
+	if publicURL == "" {
+		publicURL = "http://" + httpAddr
+	}
+	publicURL = strings.TrimSuffix(publicURL, "/")
+
 	lis, err := net.Listen("tcp", grpcAddr)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
 	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
+	srv := &server{PublicURL: publicURL}
+	pb.RegisterGreeterServer(s, srv)
 
 	log.Println("Serving gRPC on " + grpcAddr)
 	go func() {
@@ -44,12 +63,6 @@ func main() {
 			log.Fatalf("failed to serve: %v", err)
 		}
 	}()
-
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "3000"
-	}
-	httpAddr := "0.0.0.0:" + httpPort
 
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
@@ -69,9 +82,8 @@ func main() {
 		log.Fatalln("Failed to register gateway:", err)
 	}
 
-	fs := http.FileServer(http.Dir("./static"))
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", fs.ServeHTTP)
+	mux.HandleFunc("/", srv.handleTemplate("template/index.html"))
 	mux.Handle("/api/hello", gwmux)
 
 	gwServer := &http.Server{
@@ -81,4 +93,25 @@ func main() {
 
 	log.Println("Serving gRPC-Gateway on " + httpAddr)
 	log.Fatalln(gwServer.ListenAndServe())
+}
+
+func (s *server) handleTemplate(files ...string) http.HandlerFunc {
+	var (
+		init sync.Once
+		tmpl *template.Template
+		err  error
+	)
+	return func(w http.ResponseWriter, r *http.Request) {
+		init.Do(func() {
+			tmpl, err = template.ParseFiles(files...)
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := tmpl.Execute(w, s); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
 }
