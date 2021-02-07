@@ -32,7 +32,8 @@ var indexTemplate string = `<!DOCTYPE html>
     <h3>Usage</h3>
     <br>
     <pre>http POST \
-    '{{ .PublicURL }}/api/hello' name=asdf
+    '{{ .PublicURL }}/api/hello' \
+    name=asdf
 
 http POST \
     '{{ .PublicURL }}/api/reverse' \
@@ -40,7 +41,8 @@ http POST \
 
 http POST \
     '{{ .PublicURL }}/api/reverse' \
-    input=foobar upper:=true</pre>
+    input=foobar \
+    upper:=true</pre>
     <h3>Proto</h3>
     <br>
     <pre>
