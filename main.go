@@ -83,7 +83,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", srv.handleTemplate("template/index.html"))
+	mux.HandleFunc("/", srv.index)
 	mux.Handle("/api/hello", gwmux)
 
 	gwServer := &http.Server{
@@ -95,23 +95,21 @@ func main() {
 	log.Fatalln(gwServer.ListenAndServe())
 }
 
-func (s *server) handleTemplate(files ...string) http.HandlerFunc {
+func (s *server) index(w http.ResponseWriter, r *http.Request) {
 	var (
 		init sync.Once
 		tmpl *template.Template
 		err  error
 	)
-	return func(w http.ResponseWriter, r *http.Request) {
-		init.Do(func() {
-			tmpl, err = template.ParseFiles(files...)
-		})
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	init.Do(func() {
+		tmpl, err = template.New("index").Parse(indexTemplate)
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		if err := tmpl.Execute(w, s); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	if err := tmpl.Execute(w, s); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

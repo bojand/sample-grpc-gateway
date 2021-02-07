@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+package main
+
+var indexTemplate string = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -52,4 +54,4 @@ message HelloReply {
 }</pre>
 </body>
 
-</html>
+</html>`
