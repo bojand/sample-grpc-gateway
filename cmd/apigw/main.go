@@ -80,6 +80,8 @@ func (s *server) index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	
+	log.Println("serve index")
 
 	if err := tmpl.Execute(w, s); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
